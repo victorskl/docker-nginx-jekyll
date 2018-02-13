@@ -1,3 +1,3 @@
 # docker-nginx-jekyll
 
-Hosting Jekyll site with Nginx inside Docker container
+Hosting Jekyll sites with Nginx inside Docker container.
