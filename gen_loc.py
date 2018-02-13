@@ -21,8 +21,8 @@ for f in allList:
 			fh.write("}\n")
 			fh.close()
 
-if len(allList) > 0:
-    fh = open("./conf.d/locations.file", "a")
+if len(allList) == 0:
+    fh = open("./conf.d/locations.file", "w")
     fh.close()
 
 print "Done gen_loc.py!"
