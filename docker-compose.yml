@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./cond.d:/etc/nginx/conf.d:ro
+#      - ./html:/usr/share/nginx/html:ro
+      - ./repos:/repos:ro
+    restart: always

@@ -1,0 +1,18 @@
+location /bob {
+    alias /repos/bob/_site;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /repos/bob/.htpasswd;
+}
+
+location /alice {
+    alias /repos/alice/_site;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /repos/alice/.htpasswd;
+
+}
+
+location /sample {
+    alias /repos/sample/_site;
+    auth_basic "Restricted Content";
+    auth_basic_user_file /repos/sample/.htpasswd;
+}
