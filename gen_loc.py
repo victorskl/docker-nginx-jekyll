@@ -25,4 +25,4 @@ if len(allList) == 0:
     fh = open("./conf.d/locations.file", "w")
     fh.close()
 
-print "Done gen_loc.py!"
+print "Done"
