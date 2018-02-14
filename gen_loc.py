@@ -1,40 +1,46 @@
-import os
 import os.path
 import shlex
 from subprocess import Popen, PIPE
 
-basePath = "./repos"
-basePath2 = "/repos"
+repos_path = "./repos"
+repos_path_in_container = "/repos"
 locations_file = "./conf.d/locations.file"
 
-if not os.path.exists(locations_file):
-    fh = open(locations_file, "w")
-    fh.close()
 
-try:
-    listingFile = open(locations_file, "r")
-    listingContents = listingFile.read()
-except IOError:
-    listingContents = ""
+def do_cmd(cmd):
+    print cmd
+    process = Popen(shlex.split(cmd), stdout=PIPE, stderr=PIPE)
+    out, err = process.communicate()
 
 
-allList = os.listdir(basePath)
-for f in allList:
-    site_path = basePath + "/" + f
-    if os.path.isdir(site_path) and f[0]!='.':
+def main():
 
-        command = "jekyll build -s " + site_path + " -d " + site_path + "/_site" + " -b /" + f
-        print command
-        process = Popen(shlex.split(command), stdout=PIPE, stderr=PIPE)
-        out, err = process.communicate()
+    with open(locations_file, "w") as loc_file:
 
-        if f not in listingContents:
-            fh = open(locations_file, "a")
-            fh.write("\nlocation " + "/"+ f +" {\n")
-            fh.write("\talias " + basePath2 +"/"+ f +"/_site;\n")
-            fh.write("\tauth_basic \"Restricted Content\";\n")
-            fh.write("\tauth_basic_user_file " + basePath2 + "/" + f + "/.htpasswd;\n")
-            fh.write("}\n")
-            fh.close()
+        dir_list = os.listdir(repos_path)
 
-print "Done"
+        for site in dir_list:
+
+            site_path = repos_path + "/" + site
+            is_auth = os.path.isfile(site_path + "/" + ".htpasswd")
+
+            if os.path.isdir(site_path) and site[0] != '.':
+
+                cmd = "jekyll build -s " + site_path + " -d " + site_path + "/_site" + " -b /" + site
+                do_cmd(cmd)
+
+                loc_file.write("\nlocation " + "/" + site + " {\n")
+                loc_file.write("\talias " + repos_path_in_container + "/" + site + "/_site;\n")
+
+                if is_auth:
+                    loc_file.write("\tauth_basic \"Restricted Content\";\n")
+                    loc_file.write("\tauth_basic_user_file " + repos_path_in_container + "/" + site + "/.htpasswd;\n")
+
+                loc_file.write("}\n")
+
+    loc_file.close()
+
+
+if __name__ == '__main__':
+    main()
+    print "Done"
